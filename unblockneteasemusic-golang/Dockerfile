@@ -1,4 +1,4 @@
-FROM docker.io/library/go:alpine AS build
+FROM docker.io/library/golang:alpine AS build
 
 WORKDIR /src
 RUN apk add git && \
@@ -9,8 +9,8 @@ RUN apk add git && \
 FROM docker.io/library/alpine:latest
 
 WORKDIR /app
-COPY --from build /output /app
-COPY entrypoint.sh /app/entrypoint.sh
+COPY --from=build /output /app
+COPY unblockneteasemusic-golang/entrypoint.sh /app/entrypoint.sh
 RUN apk add --no-cache openssl && chmod +x /app/*.sh
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
