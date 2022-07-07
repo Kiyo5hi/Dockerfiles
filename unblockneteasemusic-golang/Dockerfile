@@ -13,5 +13,8 @@ COPY --from=build /output /app
 COPY entrypoint.sh /app/entrypoint.sh
 RUN apk add --no-cache openssl && chmod +x /app/*.sh
 
+EXPOSE 80
+EXPOSE 443
+
 ENTRYPOINT [ "/app/entrypoint.sh" ]
 
