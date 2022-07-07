@@ -10,7 +10,7 @@ FROM docker.io/library/alpine:latest
 
 WORKDIR /app
 COPY --from=build /output /app
-COPY unblockneteasemusic-golang/entrypoint.sh /app/entrypoint.sh
+COPY entrypoint.sh /app/entrypoint.sh
 RUN apk add --no-cache openssl && chmod +x /app/*.sh
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]
