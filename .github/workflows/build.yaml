@@ -18,7 +18,7 @@ env:
 
 jobs:
   build_amd64:
-    name: Build and push Docker image
+    name: Build AMD64
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -71,7 +71,7 @@ jobs:
           file: ./${{ matrix.name }}/Dockerfile
 
   build_arm64:
-    name: Build and push Docker image
+    name: Build ARM64
     runs-on: self-hosted
     strategy:
       matrix:

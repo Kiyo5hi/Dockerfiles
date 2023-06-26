@@ -88,6 +88,21 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
     echo 'Install pnpm... [DONE'
 }
 
+install_go() {
+    echo 'Installing GoLang...'
+    curl -fsSL "https://dl.google.com/go/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" | sudo tar -C /usr/local -xz
+    GO_ENVS='
+export PATH=$PATH:/usr/local/go/bin
+'
+    for i in ~/.bashrc ~/.zshrc
+    do
+        echo "$GO_ENVS" >> $i
+    done
+
+    eval "$GO_ENVS"
+    echo 'Installing GoLang... [DONE]'
+}
+
 setup_shell() {
     echo 'Installing Oh My Zsh...'
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended &>> "$LOG_FILE"
@@ -106,5 +121,6 @@ install_essentials
 setup_shell
 install_python
 install_nodejs
+install_go
 
 echo 'All set! Restart your shell to try it out!'
