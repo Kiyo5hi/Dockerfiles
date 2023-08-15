@@ -90,7 +90,15 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 install_go() {
     echo 'Installing GoLang...'
-    curl -fsSL "https://dl.google.com/go/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" | sudo tar -C /usr/local -xz
+    arch=$(uname -i)
+    if [[ $arch == aarch64 ]]; then
+        curl -fsSL "https://dl.google.com/go/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" | sudo tar -C /usr/local -xz
+    elif [[ $arch == x86_64 ]]; then
+        curl -fsSL "https://dl.google.com/go/$(curl https://go.dev/VERSION?m=text).linux-arm64.tar.gz" | sudo tar -C /usr/local -xz
+    else
+        echo "Unsupported architecture: $arch; skipping GoLang installation"
+        return
+    fi
     GO_ENVS='
 export PATH=$PATH:/usr/local/go/bin
 '
