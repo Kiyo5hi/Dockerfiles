@@ -1,4 +1,4 @@
-FROM docker.io/codercom/code-server:latest
+FROM docker.io/codercom/code-server:debian
 
 COPY ./code-server/setup.sh .
 RUN ./setup.sh && rm setup.sh setup.log

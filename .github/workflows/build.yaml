@@ -26,15 +26,10 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
-        env:
-          - self-hosted
         include:
-          - app: caddy-gateway
-            platform: linux/amd64
+          - platform: linux/amd64
             env: ubuntu-latest
-        exclude:
-          - app: caddy-gateway
-            platform: linux/amd64
+          - platform: linux/arm64
             env: self-hosted
     runs-on: ${{ matrix.env }}
     permissions:
