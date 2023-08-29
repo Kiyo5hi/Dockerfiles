@@ -21,6 +21,7 @@ jobs:
         app: 
           - caddy-gateway
           - code-server
+          - torchserve
         platform:
           - linux/amd64
           - linux/arm64
@@ -73,12 +74,11 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./${{ matrix.app }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          file: ./${{ matrix.app }}/Dockerfile
           outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
@@ -96,12 +96,14 @@ jobs:
           retention-days: 1
 
   merge:
+    name: Merge and Push
     runs-on: ubuntu-latest
     strategy:
       matrix:
         app:
           - caddy-gateway
           - code-server
+          - torchserve
     permissions:
       contents: read
       packages: write
@@ -132,6 +134,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.IMAGE_NAME }}
+          tags: type=sha
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
