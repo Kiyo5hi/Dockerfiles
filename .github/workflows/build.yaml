@@ -14,14 +14,31 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.filter.outputs.changes }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            caddy-gateway:
+              - caddy-gateway/**
+            code-server:
+              - code-server/**
+            torchserve:
+              - torchserve/**
+
   build_and_push:
     name: Build and Push Images
+    needs: changes
     strategy:
       matrix:
-        app: 
-          - caddy-gateway
-          - code-server
-          - torchserve
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
         platform:
           - linux/amd64
           - linux/arm64
@@ -100,10 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app:
-          - caddy-gateway
-          - code-server
-          - torchserve
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
     permissions:
       contents: read
       packages: write
