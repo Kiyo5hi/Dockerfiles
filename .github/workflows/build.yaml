@@ -15,6 +15,7 @@ env:
 
 jobs:
   changes:
+    name: Detect Changes
     runs-on: ubuntu-latest
     outputs:
       apps: ${{ steps.filter.outputs.changes }}
@@ -167,3 +168,33 @@ jobs:
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}  
+
+  update_charts:
+    name: Update Charts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
+    permissions:
+      contents: write
+    needs:
+      - merge
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.IMAGE_NAME }}
+
+      - name: Update appVersion
+        run: |
+          cd helm
+          sed -i 's/appVersion:.*/appVersion: ${{ steps.meta.outputs.version }}/' ${{ matrix.app }}/helm/Chart.yaml
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add Chart.yaml
+          git commit -m "build(*): updated appVersion (${{ steps.meta.outputs.version }})"
+          git push
