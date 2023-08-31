@@ -30,19 +30,19 @@ securityContext: {}
 service:
   type: ClusterIP
   ports:
-    - name: httpManagement
+    - name: http-inference
       port: 8080
       protocol: TCP
-    - name: httpManagement
+    - name: http-management
       port: 8081
       protocol: TCP
-    - name: httpMetrics
+    - name: http-metrics
       port: 8082
       protocol: TCP
-    - name: grpcInference
+    - name: grpc-inference
       port: 7070
       protocol: TCP
-    - name: grpcManagement
+    - name: grpc-management
       port: 7071
       protocol: TCP
 

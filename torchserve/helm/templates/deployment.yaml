@@ -31,18 +31,20 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             {{- range .Values.service.ports }}
-            - name: .name
+            - name: {{ .name }}
               containerPort: {{ .port }}
               protocol: {{ .protocol }}
             {{- end }}
+          {{- with (first .Values.service.ports) }}
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /ping
+              port: {{ .name }}
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /ping
+              port: {{ .name }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
