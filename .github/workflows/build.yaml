@@ -197,6 +197,7 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: type=sha,format=long
+          flavor: latest=true
 
       - name: Update appVersion
         run: |
