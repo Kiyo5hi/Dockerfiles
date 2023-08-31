@@ -150,7 +150,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.IMAGE_NAME }}
-          tags: type=sha
+          tags: type=sha,format=long
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -185,18 +185,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set IMAGE_NAME
+        run: |
+          echo "IMAGE_NAME=${IMAGE_NAME,,}" >>${GITHUB_ENV}
+        env:
+          IMAGE_NAME: ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.app }}
+
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.IMAGE_NAME }}
+          tags: type=sha,format=long
 
       - name: Update appVersion
         run: |
-          cd helm
-          sed -i 's/appVersion:.*/appVersion: ${{ steps.meta.outputs.version }}/' ${{ matrix.app }}/helm/Chart.yaml
+          cd ${{ matrix.app }}/helm
+          sed -i 's/appVersion:.*/appVersion: ${{ steps.meta.outputs.version }}/' Chart.yaml
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
           git add Chart.yaml
-          git commit -m "build(*): updated appVersion (${{ steps.meta.outputs.version }})"
+          git commit -m "build(${{ matrix.app }}): updated appVersion to ${{ steps.meta.outputs.version }}"
           git push
