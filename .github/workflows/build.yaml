@@ -124,6 +124,7 @@ jobs:
       packages: write
     needs:
       - build_and_push
+      - changes
     steps:
       - name: Download digests
         uses: actions/download-artifact@v3
@@ -179,6 +180,7 @@ jobs:
       contents: write
     needs:
       - merge
+      - changes
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
