@@ -8,6 +8,11 @@ name: Build
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - caddy-gateway/**
+      - code-server/**
+      - torchserve/**
+      - .github/workflows/build.yaml
 
 env:
   # Use docker.io for Docker Hub if empty
